@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#0f1419" />
+  <title>行业英语词库</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f1419;
+      --panel: #171e27;
+      --panel-2: #1e2733;
+      --ink: #e8edf4;
+      --muted: #8b9bb0;
+      --accent: #3d9cf5;
+      --accent-2: #5ee0a8;
+      --warn: #f0b429;
+      --err: #f07178;
+      --line: rgba(232, 237, 244, 0.1);
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --font: "DM Sans", "PingFang SC", sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      font-family: var(--font);
+      color: var(--ink);
+      background: var(--bg);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background:
+        radial-gradient(70% 50% at 0% 0%, rgba(61, 156, 245, 0.12), transparent 55%),
+        radial-gradient(55% 40% at 100% 10%, rgba(94, 224, 168, 0.08), transparent 50%),
+        linear-gradient(180deg, #121820 0%, var(--bg) 100%);
+    }
+
+    .app {
+      max-width: 520px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      padding: calc(14px + var(--safe-top)) 16px calc(24px + var(--safe-bottom));
+    }
+
+    .hero { margin-bottom: 18px; }
+    .hero h1 {
+      font-size: 1.55rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .hero p {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .row { display: flex; gap: 8px; }
+    .row + .row { margin-top: 10px; }
+
+    input[type="text"], select {
+      flex: 1;
+      min-width: 0;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--ink);
+      font: inherit;
+      font-size: 1rem;
+      padding: 12px 14px;
+      outline: none;
+    }
+    input:focus { border-color: rgba(61, 156, 245, 0.55); }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      font: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 12px 16px;
+      background: var(--accent);
+      color: #061018;
+    }
+    button:disabled { opacity: 0.45; cursor: default; }
+    button.secondary {
+      background: var(--panel-2);
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    button.ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      font-size: 0.82rem;
+      padding: 8px 10px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .chip {
+      background: var(--panel-2);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 0.82rem;
+    }
+
+    .opts {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .opts label { display: flex; align-items: center; gap: 6px; }
+    .opts select { flex: 0; width: auto; padding: 8px 10px; font-size: 0.85rem; }
+
+    #status {
+      min-height: 1.2em;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin: 8px 2px 0;
+    }
+    #status[data-kind="ok"] { color: var(--accent-2); }
+    #status[data-kind="warn"] { color: var(--warn); }
+    #status[data-kind="err"] { color: var(--err); }
+    #status[data-kind="busy"] { color: var(--accent); }
+
+    #meta {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    #word-list {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+    .word-item {
+      display: grid;
+      grid-template-columns: 36px 1fr auto;
+      grid-template-rows: auto auto;
+      gap: 2px 10px;
+      align-items: center;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor: pointer;
+    }
+    .word-item:active { transform: scale(0.99); }
+    .rank {
+      grid-row: 1 / span 2;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .term {
+      font-size: 1.02rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+    .score {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--accent-2);
+    }
+    .src {
+      grid-column: 2 / span 2;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 28px 12px;
+      font-size: 0.9rem;
+    }
+    .empty.loading { color: var(--accent); }
+
+    .wearable-hint {
+      margin-top: 12px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    @media (max-width: 280px), (max-height: 300px) {
+      .hero h1 { font-size: 1.1rem; }
+      .hero p, .opts, #meta, .src { font-size: 0.68rem; }
+      .term { font-size: 0.88rem; }
+      button, input { padding: 9px 10px; font-size: 0.85rem; }
+      .app { padding-left: 10px; padding-right: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <h1>行业英语词库</h1>
+      <p>输入行业名称，自动聚合该领域高频常用英语词汇（种子库 + Datamuse + Wikipedia）。</p>
+    </header>
+
+    <section class="panel">
+      <div class="row">
+        <input id="industry" type="text" placeholder="例如：金融、医疗、科技、marketing" autocomplete="off" />
+        <button id="collect" type="button">收集</button>
+      </div>
+      <div class="row">
+        <button id="export" class="secondary" type="button" disabled>导出 TXT</button>
+        <button id="wearable-enable" class="ghost" type="button">启用戒指/手杖</button>
+      </div>
+      <div class="opts">
+        <label>数量
+          <select id="limit">
+            <option value="40">40</option>
+            <option value="80" selected>80</option>
+            <option value="120">120</option>
+          </select>
+        </label>
+        <label><input id="offline" type="checkbox" /> 仅离线种子库</label>
+      </div>
+      <div id="chips" class="chips"></div>
+      <p id="status"></p>
+      <p class="wearable-hint">穿戴：戒指晃动重新收集 · 手杖敲击导出词汇表</p>
+    </section>
+
+    <section class="panel">
+      <p id="meta"></p>
+      <ul id="word-list">
+        <li class="empty">输入行业后点击「收集」</li>
+      </ul>
+    </section>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/wearable-input.js"></script>
+</body>
+</html>
